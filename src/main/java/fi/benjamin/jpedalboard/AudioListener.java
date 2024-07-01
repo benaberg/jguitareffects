@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class AudioListener implements AsioDriverListener {
 
-    enum Mode {
+    public enum Mode {
         STEREO,
         MONO
     }

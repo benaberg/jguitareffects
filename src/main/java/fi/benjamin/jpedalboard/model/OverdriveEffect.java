@@ -14,11 +14,11 @@ public class OverdriveEffect extends GuitarEffect {
     public void processAudio(float[] outputLeftArray, float[] outputRightArray) {
         for (int i = 0; i < outputLeftArray.length; i++) {
             outputLeftArray[i] = (float) Math.tanh(outputLeftArray[i] * gain);
-            outputLeftArray[i] *= threshold;
+            outputLeftArray[i] *= (float) threshold;
         }
         for (int i = 0; i < outputRightArray.length; i++) {
             outputRightArray[i] = (float) Math.tanh(outputRightArray[i] * gain);
-            outputRightArray[i] *= threshold;
+            outputRightArray[i] *= (float) threshold;
         }
     }
 

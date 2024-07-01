@@ -26,9 +26,9 @@ public class GuitarEffectPane extends Control {
     private final ObservableList<SliderWrapper> sliders = FXCollections.observableArrayList();
     private final ObservableList<SliderWrapper> slidersUnmodifiable = FXCollections.unmodifiableObservableList(sliders);
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
-    private VBox container = new VBox();
-    private Label titleLabel = new Label();
-    private Button toggleButton = new Button();
+    private final VBox container = new VBox();
+    private final Label titleLabel = new Label();
+    private final Button toggleButton = new Button();
 
     public GuitarEffectPane(Effect effect) {
         this.effect = effect;
@@ -37,11 +37,11 @@ public class GuitarEffectPane extends Control {
             sliders.forEach(slider -> container.getChildren().add(slider.getSlider()));
             container.getChildren().add(toggleButton);
         });
-        ImageView inActiveView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("guitar-knob-inactive.png"))));
+        ImageView inActiveView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/pedal-knob-off.png"))));
         inActiveView.setFitHeight(24);
         inActiveView.setFitWidth(24);
 
-        ImageView activeView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("guitar-knob-active.png"))));
+        ImageView activeView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/pedal-knob-on.png"))));
         activeView.setFitHeight(24);
         activeView.setFitWidth(24);
 
