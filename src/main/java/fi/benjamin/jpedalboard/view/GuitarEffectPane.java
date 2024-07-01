@@ -1,15 +1,19 @@
 package fi.benjamin.jpedalboard.view;
 
+import fi.benjamin.jpedalboard.model.SliderWrapper;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 public class GuitarEffectPane extends Control {
 
@@ -19,24 +23,52 @@ public class GuitarEffectPane extends Control {
     }
 
     private final Effect effect;
-    private final ObservableList<Slider> sliders = FXCollections.observableArrayList();
-    private final ObservableList<Slider> slidersUnmodifiable = FXCollections.unmodifiableObservableList(sliders);
+    private final ObservableList<SliderWrapper> sliders = FXCollections.observableArrayList();
+    private final ObservableList<SliderWrapper> slidersUnmodifiable = FXCollections.unmodifiableObservableList(sliders);
+    private final BooleanProperty activeProperty = new SimpleBooleanProperty();
     private VBox container = new VBox();
     private Label titleLabel = new Label();
+    private Button toggleButton = new Button();
 
     public GuitarEffectPane(Effect effect) {
         this.effect = effect;
-        sliders.addListener((ListChangeListener<? super Slider>) change -> {
-            container.getChildren().clear();
-            container.getChildren().add(titleLabel);
-            container.getChildren().addAll(sliders);
+        sliders.addListener((ListChangeListener<? super SliderWrapper>) change -> {
+            container.getChildren().setAll(titleLabel);
+            sliders.forEach(slider -> container.getChildren().add(slider.getSlider()));
+            container.getChildren().add(toggleButton);
         });
+        ImageView inActiveView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("guitar-knob-inactive.png"))));
+        inActiveView.setFitHeight(24);
+        inActiveView.setFitWidth(24);
+
+        ImageView activeView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("guitar-knob-active.png"))));
+        activeView.setFitHeight(24);
+        activeView.setFitWidth(24);
+
+        titleLabel.getStyleClass().add("effect-label");
+        toggleButton.setGraphic(inActiveView);
+        toggleButton.getStyleClass().add("effect-button");
+        toggleButton.setOnAction(e -> {
+            activeProperty.set(activeProperty.not().get());
+            if (activeProperty.get()) {
+                toggleButton.setGraphic(activeView);
+            }
+            else {
+                toggleButton.setGraphic(inActiveView);
+            }
+        });
+
         container.setAlignment(Pos.CENTER);
         container.getChildren().add(titleLabel);
+        container.setSpacing(16);
     }
 
-    public ObservableList<Slider> getSliders() {
+    public ObservableList<SliderWrapper> getSliders() {
         return slidersUnmodifiable;
+    }
+
+    public ReadOnlyBooleanProperty getActiveProperty() {
+        return activeProperty;
     }
 
     @Override
@@ -52,13 +84,23 @@ public class GuitarEffectPane extends Control {
             super(control);
 
             control.titleLabel.setText("Overdrive");
-            Slider gainSlider = new Slider(0, 200, 20);
-            Slider thresholdSlider = new Slider(0, 1, 0.5);
 
-            control.getSliders().add(gainSlider);
-            control.getSliders().add(thresholdSlider);
+            Slider gain = new Slider(0, 200, 20);
+            Slider threshold = new Slider(0, 1, 0.5);
+            gain.setShowTickLabels(true);
+            gain.setShowTickMarks(true);
+            gain.setMajorTickUnit(50.0);
+            threshold.setShowTickLabels(true);
+            threshold.setShowTickMarks(true);
+            threshold.setMajorTickUnit(0.25);
 
-            setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.THIN)));
+            SliderWrapper gainSlider = new SliderWrapper(gain, SliderWrapper.Type.GAIN);
+            SliderWrapper thresholdSlider = new SliderWrapper(threshold, SliderWrapper.Type.THRESHOLD);
+
+            control.sliders.add(gainSlider);
+            control.sliders.add(thresholdSlider);
+
+            getStyleClass().add("effect-overdrive");
             getChildren().add(control.container);
         }
     }
@@ -68,13 +110,12 @@ public class GuitarEffectPane extends Control {
             super(control);
 
             control.titleLabel.setText("Delay");
-            Slider delaySlider = new Slider(0, 1, 0.5);
-            Slider decaySlider = new Slider(0, 1, 0.5);
+            SliderWrapper delaySlider = new SliderWrapper(new Slider(0, 1, 0.5), SliderWrapper.Type.DELAY);
+            SliderWrapper decaySlider = new SliderWrapper(new Slider(0, 1, 0.5), SliderWrapper.Type.DECAY);
 
-            control.getSliders().add(delaySlider);
-            control.getSliders().add(decaySlider);
+            control.sliders.add(delaySlider);
+            control.sliders.add(decaySlider);
 
-            setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.THIN)));
             getChildren().add(control.container);
         }
     }

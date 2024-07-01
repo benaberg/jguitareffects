@@ -1,28 +1,33 @@
 package fi.benjamin.jpedalboard;
 
 import com.synthbot.jasiohost.AsioDriver;
+import fi.benjamin.jpedalboard.model.GuitarEffect;
+import fi.benjamin.jpedalboard.model.OverdriveEffect;
+import fi.benjamin.jpedalboard.model.SliderWrapper;
 import fi.benjamin.jpedalboard.view.GuitarEffectPane;
 import javafx.application.Application;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.*;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Slider;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 public class Main extends Application {
 
     private final ObservableList<GuitarEffectPane> panes = FXCollections.observableArrayList();
     private final ObservableList<String> driverList = FXCollections.observableArrayList();
+    private final ObservableMap<GuitarEffectPane, GuitarEffect> effectMap = FXCollections.observableHashMap();
     private final BooleanProperty runningProperty = new SimpleBooleanProperty();
 
     private AudioListener audioListener = null;
@@ -49,8 +54,7 @@ public class Main extends Application {
 
         Button startDriverButton = new Button("Start Driver");
         startDriverButton.setOnAction(e -> {
-            audioListener = new AudioListener(driverBox.getSelectionModel().getSelectedItem(), AudioListener.Mode.MONO);
-
+            audioListener = new AudioListener(driverBox.getSelectionModel().getSelectedItem(), AudioListener.Mode.MONO, effectMap.values().stream().toList());
             runningProperty.set(true);
         });
         startDriverButton.disableProperty().bind(driverBox.getSelectionModel().selectedItemProperty().isNull().or(runningProperty));
@@ -65,18 +69,36 @@ public class Main extends Application {
         stopDriverButton.disableProperty().bind(runningProperty.not());
 
         HBox topBox = new HBox(driverBox, startDriverButton, stopDriverButton);
-        topBox.setSpacing(8);
-
-        panes.addAll(new GuitarEffectPane(GuitarEffectPane.Effect.OVERDRIVE), new GuitarEffectPane(GuitarEffectPane.Effect.DELAY));
-
-        // TODO: WTF??
-        panes.forEach(pane -> pane.getSliders().addListener((ListChangeListener<? super Slider>) change -> {
-
-        }));
+        topBox.setSpacing(4);
+        topBox.setPadding(new Insets(8));
 
         HBox effectBox = new HBox();
-        effectBox.getChildren().setAll(panes);
+        VBox.setVgrow(effectBox, Priority.ALWAYS);
         effectBox.setSpacing(8);
+        effectBox.setAlignment(Pos.CENTER);
+
+        effectMap.addListener((MapChangeListener<? super GuitarEffectPane, ? super GuitarEffect>) change -> {
+            panes.setAll(effectMap.keySet());
+            panes.forEach(pane -> {
+                pane.getSliders().addListener((ListChangeListener<? super SliderWrapper>) sliderChange -> {
+                    while (sliderChange.next()) {
+                        for (SliderWrapper slider : sliderChange.getAddedSubList()) {
+                            slider.getSlider().valueProperty().addListener(valueChange -> {
+                                switch (slider.getType()) {
+                                    case GAIN -> effectMap.get(pane).applySliderValues(slider.getSlider().getValue(), -1);
+                                    case THRESHOLD -> effectMap.get(pane).applySliderValues(-1, slider.getSlider().getValue());
+//                                    case DELAY -> effectMap.get(pane).applySliderValues(slider.getSlider().getValue(), -1);
+//                                    case DECAY -> effectMap.get(pane).applySliderValues(-1, slider.getSlider().getValue());
+                                }
+                            });
+                        }
+                    }
+                });
+                pane.getActiveProperty().addListener((ChangeListener<? super Boolean>) (obs, old, neo) ->
+                        effectMap.get(pane).setActive(neo));
+            });
+            effectBox.getChildren().setAll(panes);
+        });
 
         container.getChildren().addAll(topBox, effectBox);
         container.setSpacing(8);
@@ -87,8 +109,24 @@ public class Main extends Application {
             }
         });
 
+        initEffects();
+
         Scene scene = new Scene(root, 600, 400);
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("view/main.css")).toExternalForm());
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void initEffects() {
+        GuitarEffect overdriveEffect = new OverdriveEffect();
+        GuitarEffectPane overdrivePane = new GuitarEffectPane(GuitarEffectPane.Effect.OVERDRIVE);
+        overdrivePane.getStyleClass().add("effect");
+        VBox.setVgrow(overdrivePane, Priority.NEVER);
+
+//        GuitarEffect delayEffect = new DelayEffect()
+//        GuitarEffectPane delayPane = new GuitarEffectPane(GuitarEffectPane.Effect.DELAY);
+
+        effectMap.put(overdrivePane, overdriveEffect);
+//        effectMap.put(delayPane, delayEffect);
     }
 }

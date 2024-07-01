@@ -7,7 +7,7 @@ public class OverdriveEffect extends GuitarEffect {
 
     public OverdriveEffect() {
         this.gain = 20;
-        this.threshold = 0.1;
+        this.threshold = 0.5;
     }
 
     @Override
@@ -22,11 +22,23 @@ public class OverdriveEffect extends GuitarEffect {
         }
     }
 
-    public void setGain(double gain) {
-        this.gain = gain;
+    @Override
+    public void applySliderValues(double gain, double threshold) {
+        if (gain != -1) {
+            this.gain = gain;
+        }
+        if (threshold != -1) {
+            this.threshold = threshold;
+        }
     }
 
-    public void setThreshold(double threshold) {
-        this.threshold = threshold;
+    @Override
+    public boolean isActive() {
+        return super.isActive();
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        super.setActive(active);
     }
 }

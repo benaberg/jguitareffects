@@ -6,7 +6,6 @@ import com.synthbot.jasiohost.AsioDriverListener;
 import com.synthbot.jasiohost.AsioDriverState;
 import fi.benjamin.jpedalboard.model.GuitarEffect;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,14 +24,15 @@ public class AudioListener implements AsioDriverListener {
     private static final String OUTPUT_CHANNEL_2 = "Output 2";
 
     private final Set<AsioChannel> activeChannels = new HashSet<>();
-    private final List<GuitarEffect> activeEffects = new ArrayList<>();
+    private final List<GuitarEffect> effects;
     private final AsioDriver asioDriver;
     private final int bufferSize;
 
     private Mode mode;
 
-    public AudioListener(String driverName, Mode mode) {
+    public AudioListener(String driverName, Mode mode, List<GuitarEffect> effects) {
         this.mode = mode;
+        this.effects = effects;
         asioDriver = AsioDriver.getDriver(driverName);
         bufferSize = asioDriver.getBufferPreferredSize();
         asioDriver.addAsioDriverListener(this);
@@ -93,9 +93,7 @@ public class AudioListener implements AsioDriverListener {
     }
 
     private void setEffects(Set<AsioChannel> outputChannels, float[] outputLeftArray, float[] outputRightArray) {
-        for (GuitarEffect effect : activeEffects) {
-            effect.processAudio(outputLeftArray, outputRightArray);
-        }
+        effects.stream().filter(GuitarEffect::isActive).forEach(effect -> effect.processAudio(outputLeftArray, outputRightArray));
         outputChannels.forEach(channel -> {
             if (channel.getChannelName().equals(OUTPUT_CHANNEL_1) || mode.equals(Mode.MONO)) {
                 channel.write(outputLeftArray);

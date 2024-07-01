@@ -1,0 +1,21 @@
+.effect-button {
+    -fx-background-color: transparent;
+    -fx-max-height: 16px;
+    -fx-max-width: 16px;
+}
+
+.effect-label {
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
+.effect-overdrive {
+    -fx-background-color: #ff6363;
+}
+
+.effect {
+    -fx-max-width: 120px;
+    -fx-max-height: 240px;
+    -fx-border-width: 1px;
+    -fx-border-color: black;
+}
