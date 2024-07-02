@@ -54,14 +54,14 @@ public class Main extends Application {
 
         ComboBox<String> driverBox = new ComboBox<>(driverList);
 
-        Button startDriverButton = new Button("Start Driver");
+        Button startDriverButton = new Button(Res.getString("button.start.driver"));
         startDriverButton.setOnAction(e -> {
             audioListener = new AudioListener(driverBox.getSelectionModel().getSelectedItem(), AudioListener.Mode.MONO, effectMap.values().stream().toList());
             runningProperty.set(true);
         });
         startDriverButton.disableProperty().bind(driverBox.getSelectionModel().selectedItemProperty().isNull().or(runningProperty));
 
-        Button stopDriverButton = new Button("Stop Driver");
+        Button stopDriverButton = new Button(Res.getString("button.stop.driver"));
         stopDriverButton.setOnAction(e -> {
             if (audioListener != null) {
                 audioListener.stop();
@@ -114,7 +114,7 @@ public class Main extends Application {
         Scene scene = new Scene(root, 600, 400);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("view/main.css")).toExternalForm());
         stage.setScene(scene);
-        stage.setTitle("JPedalboard v1.0.0-SNAPSHOT");
+        stage.setTitle(Res.getString("application.title"));
         stage.show();
     }
 

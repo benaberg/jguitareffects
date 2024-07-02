@@ -1,0 +1,1 @@
+java --module-path "javafx\javafx-sdk-22.0.1\lib" --add-modules=javafx.controls -jar .\target\jpedalboard-1.0-SNAPSHOT.jar -Djava.library.path=dll

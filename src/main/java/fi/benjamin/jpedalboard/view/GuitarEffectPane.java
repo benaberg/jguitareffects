@@ -1,5 +1,6 @@
 package fi.benjamin.jpedalboard.view;
 
+import fi.benjamin.jpedalboard.Res;
 import fi.benjamin.jpedalboard.model.SliderWrapper;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -110,7 +111,7 @@ public class GuitarEffectPane extends Control {
         private OverdriveSkin(GuitarEffectPane control) {
             super(control);
 
-            control.titleLabel.setText("Overdrive");
+            control.titleLabel.setText(Res.getString("effect.overdrive.title"));
 
             Slider gain = new Slider(0, 200, 20);
             Slider threshold = new Slider(0, 1, 0.5);
@@ -136,7 +137,7 @@ public class GuitarEffectPane extends Control {
         private DelaySkin(GuitarEffectPane control) {
             super(control);
 
-            control.titleLabel.setText("Delay");
+            control.titleLabel.setText(Res.getString("effect.delay.title"));
 
             Slider delay = new Slider(0, 1, 0.5);
             Slider decay = new Slider(0, 1, 0.5);
