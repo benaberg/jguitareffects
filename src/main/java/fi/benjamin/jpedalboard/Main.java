@@ -113,6 +113,7 @@ public class Main extends Application {
         Scene scene = new Scene(root, 600, 400);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("view/main.css")).toExternalForm());
         stage.setScene(scene);
+        stage.setTitle("JPedalboard v1.0.0-SNAPSHOT");
         stage.show();
     }
 
