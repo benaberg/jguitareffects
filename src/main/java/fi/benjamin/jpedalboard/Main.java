@@ -1,6 +1,7 @@
 package fi.benjamin.jpedalboard;
 
 import com.synthbot.jasiohost.AsioDriver;
+import fi.benjamin.jpedalboard.model.DelayEffect;
 import fi.benjamin.jpedalboard.model.GuitarEffect;
 import fi.benjamin.jpedalboard.model.OverdriveEffect;
 import fi.benjamin.jpedalboard.model.SliderWrapper;
@@ -74,7 +75,7 @@ public class Main extends Application {
 
         HBox effectBox = new HBox();
         VBox.setVgrow(effectBox, Priority.ALWAYS);
-        effectBox.setSpacing(8);
+        effectBox.setSpacing(20);
         effectBox.setAlignment(Pos.CENTER);
 
         effectMap.addListener((MapChangeListener<? super GuitarEffectPane, ? super GuitarEffect>) change -> {
@@ -85,10 +86,8 @@ public class Main extends Application {
                         for (SliderWrapper slider : sliderChange.getAddedSubList()) {
                             slider.getSlider().valueProperty().addListener(valueChange -> {
                                 switch (slider.getType()) {
-                                    case GAIN -> effectMap.get(pane).applySliderValues(slider.getSlider().getValue(), -1);
-                                    case THRESHOLD -> effectMap.get(pane).applySliderValues(-1, slider.getSlider().getValue());
-//                                    case DELAY -> effectMap.get(pane).applySliderValues(slider.getSlider().getValue(), -1);
-//                                    case DECAY -> effectMap.get(pane).applySliderValues(-1, slider.getSlider().getValue());
+                                    case GAIN, DELAY -> effectMap.get(pane).applySliderValues((float) slider.getSlider().getValue(), -1);
+                                    case THRESHOLD, DECAY -> effectMap.get(pane).applySliderValues(-1, (float) slider.getSlider().getValue());
                                 }
                             });
                         }
@@ -120,13 +119,13 @@ public class Main extends Application {
     private void initEffects() {
         GuitarEffect overdriveEffect = new OverdriveEffect();
         GuitarEffectPane overdrivePane = new GuitarEffectPane(GuitarEffectPane.Effect.OVERDRIVE);
-        overdrivePane.getStyleClass().add("effect");
         VBox.setVgrow(overdrivePane, Priority.NEVER);
 
-//        GuitarEffect delayEffect = new DelayEffect()
-//        GuitarEffectPane delayPane = new GuitarEffectPane(GuitarEffectPane.Effect.DELAY);
+        GuitarEffect delayEffect = new DelayEffect();
+        GuitarEffectPane delayPane = new GuitarEffectPane(GuitarEffectPane.Effect.DELAY);
+        VBox.setVgrow(delayPane, Priority.NEVER);
 
         effectMap.put(overdrivePane, overdriveEffect);
-//        effectMap.put(delayPane, delayEffect);
+        effectMap.put(delayPane, delayEffect);
     }
 }

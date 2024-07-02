@@ -26,6 +26,7 @@ public class AudioListener implements AsioDriverListener {
     private final Set<AsioChannel> activeChannels = new HashSet<>();
     private final List<GuitarEffect> effects;
     private final AsioDriver asioDriver;
+    private final int sampleRate;
     private final int bufferSize;
 
     private Mode mode;
@@ -34,6 +35,7 @@ public class AudioListener implements AsioDriverListener {
         this.mode = mode;
         this.effects = effects;
         asioDriver = AsioDriver.getDriver(driverName);
+        sampleRate = (int) asioDriver.getSampleRate();
         bufferSize = asioDriver.getBufferPreferredSize();
         asioDriver.addAsioDriverListener(this);
         for(int i = 0; i < asioDriver.getNumChannelsInput(); i ++) {
@@ -93,7 +95,7 @@ public class AudioListener implements AsioDriverListener {
     }
 
     private void setEffects(Set<AsioChannel> outputChannels, float[] outputLeftArray, float[] outputRightArray) {
-        effects.stream().filter(GuitarEffect::isActive).forEach(effect -> effect.processAudio(outputLeftArray, outputRightArray));
+        effects.stream().filter(GuitarEffect::isActive).forEach(effect -> effect.processAudio(sampleRate, outputLeftArray, outputRightArray));
         outputChannels.forEach(channel -> {
             if (channel.getChannelName().equals(OUTPUT_CHANNEL_1) || mode.equals(Mode.MONO)) {
                 channel.write(outputLeftArray);

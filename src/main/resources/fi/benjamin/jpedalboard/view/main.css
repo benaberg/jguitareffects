@@ -10,7 +10,15 @@
 }
 
 .effect-overdrive {
+    -fx-max-width: 120px;
+    -fx-max-height: 240px;
     -fx-background-color: #ff6363;
+}
+
+.effect-delay {
+    -fx-max-width: 120px;
+    -fx-max-height: 240px;
+    -fx-background-color: #bdff3e;
 }
 
 .effect {

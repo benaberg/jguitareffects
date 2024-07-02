@@ -60,6 +60,7 @@ public class GuitarEffectPane extends Control {
 
         container.setAlignment(Pos.CENTER);
         container.getChildren().add(titleLabel);
+        container.getStyleClass().add("effect");
         container.setSpacing(16);
     }
 
@@ -110,12 +111,23 @@ public class GuitarEffectPane extends Control {
             super(control);
 
             control.titleLabel.setText("Delay");
-            SliderWrapper delaySlider = new SliderWrapper(new Slider(0, 1, 0.5), SliderWrapper.Type.DELAY);
-            SliderWrapper decaySlider = new SliderWrapper(new Slider(0, 1, 0.5), SliderWrapper.Type.DECAY);
+
+            Slider delay = new Slider(0, 1, 0.5);
+            Slider decay = new Slider(0, 1, 0.5);
+            delay.setShowTickLabels(true);
+            delay.setShowTickMarks(true);
+            delay.setMajorTickUnit(0.25);
+            decay.setShowTickLabels(true);
+            decay.setShowTickMarks(true);
+            decay.setMajorTickUnit(0.25);
+
+            SliderWrapper delaySlider = new SliderWrapper(delay, SliderWrapper.Type.DELAY);
+            SliderWrapper decaySlider = new SliderWrapper(decay, SliderWrapper.Type.DECAY);
 
             control.sliders.add(delaySlider);
             control.sliders.add(decaySlider);
 
+            getStyleClass().add("effect-delay");
             getChildren().add(control.container);
         }
     }

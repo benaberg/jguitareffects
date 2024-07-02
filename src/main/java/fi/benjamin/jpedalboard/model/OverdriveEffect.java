@@ -2,28 +2,28 @@ package fi.benjamin.jpedalboard.model;
 
 public class OverdriveEffect extends GuitarEffect {
 
-    private double gain;
-    private double threshold;
+    private float gain;
+    private float threshold;
 
     public OverdriveEffect() {
-        this.gain = 20;
-        this.threshold = 0.5;
+        this.gain = 20f;
+        this.threshold = 0.5f;
     }
 
     @Override
-    public void processAudio(float[] outputLeftArray, float[] outputRightArray) {
+    public void processAudio(int sampleRate, float[] outputLeftArray, float[] outputRightArray) {
         for (int i = 0; i < outputLeftArray.length; i++) {
             outputLeftArray[i] = (float) Math.tanh(outputLeftArray[i] * gain);
-            outputLeftArray[i] *= (float) threshold;
+            outputLeftArray[i] *= threshold;
         }
         for (int i = 0; i < outputRightArray.length; i++) {
             outputRightArray[i] = (float) Math.tanh(outputRightArray[i] * gain);
-            outputRightArray[i] *= (float) threshold;
+            outputRightArray[i] *= threshold;
         }
     }
 
     @Override
-    public void applySliderValues(double gain, double threshold) {
+    public void applySliderValues(float gain, float threshold) {
         if (gain != -1) {
             this.gain = gain;
         }

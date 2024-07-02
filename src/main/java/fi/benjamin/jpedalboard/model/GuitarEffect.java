@@ -4,8 +4,8 @@ public abstract class GuitarEffect {
 
     private boolean isActive;
 
-    public abstract void processAudio(float[] outputLeftArray, float[] outputRightArray);
-    public abstract void applySliderValues(double value1, double value2);
+    public abstract void processAudio(int sampleRate, float[] outputLeftArray, float[] outputRightArray);
+    public abstract void applySliderValues(float value1, float value2);
 
     public boolean isActive() {
         return isActive;
