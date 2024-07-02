@@ -1,4 +1,4 @@
-package fi.benjamin.jpedalboard;
+package fi.benjamin.jpedalboard.io;
 
 import com.synthbot.jasiohost.AsioChannel;
 import com.synthbot.jasiohost.AsioDriver;

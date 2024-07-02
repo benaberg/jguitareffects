@@ -1,6 +1,7 @@
 package fi.benjamin.jpedalboard;
 
 import com.synthbot.jasiohost.AsioDriver;
+import fi.benjamin.jpedalboard.io.AudioListener;
 import fi.benjamin.jpedalboard.model.DelayEffect;
 import fi.benjamin.jpedalboard.model.GuitarEffect;
 import fi.benjamin.jpedalboard.model.OverdriveEffect;
