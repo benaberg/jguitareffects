@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile="C:\Users\benja\Documents\Programmering\Java\jpedalboard\lib\JAsioHost.jar" -DgroupId="com.synthbot.jasiohost" -DartifactId="jasiohost" -Dversion="1.0.0" -Dpackaging=jar -DgeneratePom=true -e
